@@ -1,13 +1,12 @@
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> } 
- */
+const userData = require("../seed-data/users");
+const taskData = require("../seed-data/tasks");
+const assignData =  require ("../seed-data/assigns");
+
 exports.seed = async function(knex) {
-  // Deletes ALL existing entries
-  await knex('table_name').del()
-  await knex('table_name').insert([
-    {id: 1, colName: 'rowValue1'},
-    {id: 2, colName: 'rowValue2'},
-    {id: 3, colName: 'rowValue3'}
-  ]);
+  await knex("assigns").del();
+  await knex("tasks").del();
+  await knex("users").del();
+  await knex("users").insert(userData);
+  await knex("tasks").insert(taskData);
+  await knex("assigns").insert(assignData);
 };

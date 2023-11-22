@@ -1,4 +1,4 @@
-const assignData = [
+module.exports = [
     {
         id: 1,
         users_id: 3,

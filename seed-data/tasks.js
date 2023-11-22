@@ -1,4 +1,4 @@
-const taskData = [
+module.exports = [
     {
         id: 1,
         title: "Pick up Prescription",
