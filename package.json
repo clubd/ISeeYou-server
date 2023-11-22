@@ -9,7 +9,7 @@
     "migrate:down": "knex migrate:down",
     "migrate:rollback": "knex migrate:rollback",
     "seed": "knex seed:run",
-    "start": "node index.js"
+    "start": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +19,9 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "knex": "^3.0.1",
-    "mysql2": "^3.6.5",
+    "mysql2": "^3.6.5"
+  },
+  "devDependencies": {
     "nodemon": "^3.0.1"
   }
 }
