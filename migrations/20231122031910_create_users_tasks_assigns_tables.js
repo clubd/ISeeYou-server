@@ -9,16 +9,16 @@ exports.up = function (knex) {
             table.string("firstName").notNullable();
             table.string("lastName").notNullable();
             table.string("email").notNullable();
-            table.string('phone').notNullable();
-            table.string('password').notNullable();
+            table.string("phone").notNullable();
+            table.string("password").notNullable();
             table.timestamp("created_at").defaultTo(knex.fn.now());
         })
         .createTable("tasks", (table) => {
             table.increments("id").primary();
             table.string("title").notNullable();
-            able.text('description').notNullable();
-            table.string('status').notNullable();
-            table.string('priorityLevel').notNullable();
+            able.text("description").notNullable();
+            table.string("status").notNullable();
+            table.string("priorityLevel").notNullable();
             table.integer("users_id")
                 .unsigned()
                 .references("users.id")
