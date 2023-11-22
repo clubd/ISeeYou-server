@@ -16,7 +16,7 @@ exports.up = function (knex) {
         .createTable("tasks", (table) => {
             table.increments("id").primary();
             table.string("title").notNullable();
-            timestampable.text("description").notNullable();
+            table.text("description").notNullable();
             table.string("status").notNullable();
             table.string("priorityLevel").notNullable();
             table.integer("users_id")
