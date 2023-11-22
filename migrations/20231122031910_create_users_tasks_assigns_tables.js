@@ -16,7 +16,7 @@ exports.up = function (knex) {
         .createTable("tasks", (table) => {
             table.increments("id").primary();
             table.string("title").notNullable();
-            able.text("description").notNullable();
+            timestampable.text("description").notNullable();
             table.string("status").notNullable();
             table.string("priorityLevel").notNullable();
             table.integer("users_id")
@@ -32,7 +32,7 @@ exports.up = function (knex) {
         })
         .createTable("assigns", (table) => {
             table.increments("id").primary();
-            tabletable.integer("users_id")
+            table.integer("users_id")
                 .unsigned()
                 .references("users.id")
                 .onUpdate("CASCADE")
