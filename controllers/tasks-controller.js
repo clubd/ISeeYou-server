@@ -29,8 +29,31 @@ const findOne = async (req, res) => {
     }
 };
 
+const update = async (req, res) => {
+    const taskId = req.params.id;
+
+    try {
+        const rowsUpdated = await knex("tasks").where({ id: taskId }).update(req.body);
+
+        if (rowsUpdated === 0) {
+            return res.status(404).json({
+                message: `Task with ID ${taskId} not found`,
+            });
+        }
+
+        const updatedTask = await knex("tasks").where({ id: taskId });
+
+        res.json(updatedTask[0]);
+    } catch (error) {
+        res.status(500).json({
+            message: `Unable to update task with ID ${taskId}: ${error}`,
+        });
+    }
+};
+
 
 module.exports = {
     index,
     findOne,
+    update,
 };
