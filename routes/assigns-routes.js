@@ -1,13 +1,6 @@
-const knex = require("knex")(require("../knexfile"));
 const router = require("express").Router();
+const assignController = require("../controllers/assigns-controller")
 
-router.get("/", async (_req, res) => {
-    try {
-        const data = await knex("assigns");
-        res.status(200).json(data);
-    } catch (err) {
-        res.status(400).send(`Error retrieving Users: ${err}`)
-    }
-});
+router.route("/").get(assignController.index);
 
 module.exports = router;
