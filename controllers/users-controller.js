@@ -29,7 +29,46 @@ const findOne = async (req, res) => {
     }
 };
 
+const tasks = async (req, res) => {
+    try {
+        const tasks = await knex("users")
+            .join("tasks", "tasks.users_id", "users.id")
+            .where({ users_id: req.params.id });
+
+        res.json(tasks);
+    } catch (error) {
+        res.status(500).json({
+            message: `Unable to retrieve tasks for user with ID ${req.params.id}: ${error}`,
+        });
+    }
+};
+
+const createUser = async (req, res) => {
+    if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.phone || !req.body.password) {
+        return res.status(400).json({
+            message: "Please provide all required information for the user request",
+        });
+    }
+
+    console.log('look here: ', req.body);
+
+    try {
+        const result = await knex("users").insert(req.body);
+        console.log(result)
+        const newUsersId = result[0];
+        const createdUser = await knex("users").where({ id: newUsersId });
+
+        res.status(201).json(createdUser);
+    } catch (error) {
+        res.status(500).json({
+            message: `Unable to create new user: ${error}`,
+        });
+    }
+};
+
 module.exports = {
     index,
     findOne,
+    tasks,
+    createUser,
 };
