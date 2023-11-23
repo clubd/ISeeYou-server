@@ -22,7 +22,7 @@ exports.up = function (knex) {
             table.integer("users_id").unsigned().references("users.id").onUpdate("CASCADE").onDelete("CASCADE");
             table.timestamp("created_at").defaultTo(knex.fn.now());
             table.timestamp("updated_at").defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
-            table.timestamp("deadline").defaultTo(knex.fn.now());
+            table.timestamp("deadline").notNullable();
         })
         .createTable("assigns", (table) => {
             table.increments("id").primary();
