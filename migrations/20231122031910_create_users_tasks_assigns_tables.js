@@ -21,9 +21,7 @@ exports.up = function (knex) {
             table.string("priorityLevel").notNullable();
             table.integer("users_id").unsigned().references("users.id").onUpdate("CASCADE").onDelete("CASCADE");
             table.timestamp("created_at").defaultTo(knex.fn.now());
-            table
-                .timestamp("updated_at")
-                .defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
+            table.timestamp("updated_at").defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
             table.timestamp("deadline").defaultTo(knex.fn.now());
         })
         .createTable("assigns", (table) => {
@@ -35,5 +33,5 @@ exports.up = function (knex) {
 };
 
 exports.down = function (knex) {
-    return knex.schema.dropTable("assigns").dropTable("tasks").dropTable("user");
+    return knex.schema.dropTable("assigns").dropTable("tasks").dropTable("users");
 };
