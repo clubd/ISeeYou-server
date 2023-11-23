@@ -19,11 +19,7 @@ exports.up = function (knex) {
             table.text("description").notNullable();
             table.string("status").notNullable();
             table.string("priorityLevel").notNullable();
-            table.integer("users_id")
-                .unsigned()
-                .references("users.id")
-                .onUpdate("CASCADE")
-                .onDelete("CASCADE");
+            table.integer("users_id").unsigned().references("users.id").onUpdate("CASCADE").onDelete("CASCADE");
             table.timestamp("created_at").defaultTo(knex.fn.now());
             table
                 .timestamp("updated_at")
@@ -32,16 +28,8 @@ exports.up = function (knex) {
         })
         .createTable("assigns", (table) => {
             table.increments("id").primary();
-            table.integer("users_id")
-                .unsigned()
-                .references("users.id")
-                .onUpdate("CASCADE")
-                .onDelete("CASCADE");
-            table.integer("tasks_id")
-                .unsigned()
-                .references("tasks.id")
-                .onUpdate("CASCADE")
-                .onDelete("CASCADE");
+            table.integer("users_id").unsigned().references("users.id").onUpdate("CASCADE").onDelete("CASCADE");
+            table.integer("tasks_id").unsigned().references("tasks.id").onUpdate("CASCADE").onDelete("CASCADE");
             table.timestamp("created_at").defaultTo(knex.fn.now());
         })
 };
