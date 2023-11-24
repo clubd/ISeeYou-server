@@ -35,7 +35,29 @@ const add = async (req, res) => {
     }
 };
 
+const remove = async (req, res) => {
+    const userId = req.query.userId;
+    const taskId = req.query.taskId;
+
+    try {
+        const rowsDeleted = await knex("assigns").where({ users_id: userId, tasks_id: taskId }).delete();
+
+        if (rowsDeleted === 0) {
+            return res.status(404).json({
+                message: "Assignment not found for this user and task.",
+            });
+        }
+
+        res.sendStatus(204);
+    } catch (error) {
+        res.status(500).json({
+            message: `Unable to remove assignment: ${error}`,
+        });
+    }
+};
+
 module.exports = {
     index,
-    add
+    add,
+    remove
 }

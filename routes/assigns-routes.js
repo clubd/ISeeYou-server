@@ -3,5 +3,6 @@ const assignController = require("../controllers/assigns-controller")
 
 router.route("/").get(assignController.index);
 router.route("/add").post(assignController.add);
+router.route("/remove").delete(assignController.remove);
 
 module.exports = router;
