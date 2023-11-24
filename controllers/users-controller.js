@@ -1,4 +1,8 @@
 const knex = require("knex")(require("../knexfile"));
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const secretKey = "a667c5c6a02383e5730e4a9740c1628deefd405b5d243ff5a731e13831fdd1f1"
+
 
 const index = async (_req, res) => {
     try {
@@ -36,26 +40,6 @@ const tasks = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             message: `Unable to retrieve tasks for user with ID ${req.params.id}: ${error}`,
-        });
-    }
-};
-
-const create = async (req, res) => {
-    if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.phone || !req.body.password) {
-        return res.status(400).json({
-            message: "Please provide all required information for the user request",
-        });
-    }
-
-    try {
-        const result = await knex("users").insert(req.body);
-        const newUsersId = result[0];
-        const createdUser = await knex("users").where({ id: newUsersId });
-
-        res.status(201).json(createdUser);
-    } catch (error) {
-        res.status(500).json({
-            message: `Unable to create new user: ${error}`,
         });
     }
 };
@@ -120,12 +104,37 @@ const createTask = async (req, res) => {
     }
 };
 
+const register = async (req, res) => {
+    const { firstName, lastName, email, phone, password } = req.body;
+
+    try {
+        const passwordHash = await bcrypt.hash(password, 14);
+        const result = await knex('users').insert({
+            firstName,
+            lastName,
+            email,
+            phone,
+            passwordHash,
+        });
+
+        const newUserId = result[0];
+        const token = jwt.sign({ userId: newUserId }, secretKey, { expiresIn: '24h' });
+
+        res.status(201).json({ token });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'Unable to register user.',
+        });
+    }
+};
+
 module.exports = {
     index,
     findOne,
     tasks,
-    create,
     update,
     remove,
-    createTask
+    createTask,
+    register,
 };
