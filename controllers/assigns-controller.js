@@ -11,6 +11,25 @@ const index = async (_req, res) => {
     }
 };
 
+const findOne = async (req, res) => {
+    try {
+        const assignsFound = await knex("assigns").where({ id: req.params.id });
+
+        if (assignsFound.length === 0) {
+            return res.status(404).json({
+                message: `Assign with ID ${req.params.id} not found`
+            });
+        }
+
+        const assignData = assignsFound[0];
+        res.json(assignData);
+    } catch (error) {
+        res.status(500).json({
+            message: `Unable to retrieve assign data for assign with ID ${req.params.id}`,
+        });
+    }
+};
+
 const add = async (req, res) => {
     const userId = req.query.userId;
     const taskId = req.query.taskId;
@@ -58,6 +77,7 @@ const remove = async (req, res) => {
 
 module.exports = {
     index,
+    findOne,
     add,
     remove
 }
