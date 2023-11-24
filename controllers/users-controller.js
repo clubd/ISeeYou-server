@@ -1,6 +1,6 @@
 const knex = require("knex")(require("../knexfile"));
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const secretKey = "a667c5c6a02383e5730e4a9740c1628deefd405b5d243ff5a731e13831fdd1f1"
 
 
@@ -109,7 +109,7 @@ const register = async (req, res) => {
 
     try {
         const passwordHash = await bcrypt.hash(password, 14);
-        const result = await knex('users').insert({
+        const result = await knex("users").insert({
             firstName,
             lastName,
             email,
@@ -118,23 +118,50 @@ const register = async (req, res) => {
         });
 
         const newUserId = result[0];
-        const token = jwt.sign({ userId: newUserId }, secretKey, { expiresIn: '24h' });
+        const token = jwt.sign({ userId: newUserId }, secretKey, { expiresIn: "24h" });
 
         res.status(201).json({ token });
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: 'Unable to register user.',
+            message: "Unable to register user."
         });
     }
 };
 
-module.exports = {
-    index,
-    findOne,
-    tasks,
-    update,
-    remove,
-    createTask,
-    register,
+const login = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await knex("users").where({ email }).first();
+
+        if (!user) {
+            return res.status(401).json({ message: "Authentication failed. User not found." });
+        }
+
+        const passwordCheck = await bcrypt.compare(password, user.passwordHash);
+
+        if (!passwordCheck) {
+            return res.status(401).json({ message: "Authentication failed. Incorrect Password." });
+        }
+
+        const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: "24h" });
+
+        res.json({ token });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Unable to perform login.",});
+        }
 };
+
+    module.exports = {
+        index,
+        findOne,
+        tasks,
+        update,
+        remove,
+        createTask,
+        register,
+        login,
+    };
