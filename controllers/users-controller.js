@@ -34,6 +34,12 @@ const findOne = async (req, res) => {
 
 const tasks = async (req, res) => {
     try {
+        const userId = req.params.id;
+        console.log("Received user ID:", userId);
+
+        if (!userId) {
+            return res.status(400).json({ message: "User ID is missing in the request." });
+        }
         const tasks = await knex("users").join("tasks", "tasks.users_id", "users.id").where({ users_id: req.params.id });
 
         res.json(tasks);
@@ -145,7 +151,7 @@ const login = async (req, res) => {
         }
 
         const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_KEY, { expiresIn: "24h" });
-        res.json({ token });
+        res.json({ token, userId: user.id });
 
     } catch (error) {
         console.error(error);
