@@ -1,8 +1,8 @@
 const knex = require("knex")(require("../knexfile"));
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
-
+require('dotenv').config();
+const authorize = require("../middleware/authorize");
 
 const index = async (_req, res) => {
     try {
@@ -44,7 +44,7 @@ const tasks = async (req, res) => {
     }
 };
 
-const update = async (req, res) => {
+const update = [authorize, async (req, res) => {
     try {
         const rowsUpdated = await knex("users").where({ id: req.params.id }).update(req.body);
 
@@ -62,9 +62,9 @@ const update = async (req, res) => {
             message: `Unable to update user with ID ${req.params.id}: ${error}`
         });
     }
-};
+}];
 
-const remove = async (req, res) => {
+const remove = [authorize, async (req, res) => {
     try {
         const rowsDeleted = await knex("users").where({ id: req.params.id }).delete();
 
@@ -78,7 +78,7 @@ const remove = async (req, res) => {
             message: `Unable to delete user: ${error}`
         });
     }
-};
+}];
 
 const createTask = async (req, res) => {
     const userId = req.params.id;
@@ -118,7 +118,7 @@ const register = async (req, res) => {
         });
 
         const newUserId = result[0];
-        const token = jwt.sign({ userId: newUserId }, secretKey, { expiresIn: "24h" });
+        const token = jwt.sign({ userId: newUserId }, process.env.JWT_KEY, { expiresIn: "24h" });
 
         res.status(201).json({ token });
     } catch (error) {
@@ -133,8 +133,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const user = await knex("users").where({ email }).first();
-
+        const user = await knex("users").where({ email: email }).first();
         if (!user) {
             return res.status(401).json({ message: "Authentication failed. User not found." });
         }
@@ -145,17 +144,13 @@ const login = async (req, res) => {
             return res.status(401).json({ message: "Authentication failed. Incorrect Password." });
         }
 
-        const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: "24h" });
-        res.json({ token, user });
-
-        if (token) {
-            sessionStorage.setItem("token", token);
-        }
+        const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_KEY, { expiresIn: "24h" });
+        res.json({ token });
 
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Unable to perform login.",});
+            message: `Unable to perform login: ${error.message}`,});
         }
 };
 
