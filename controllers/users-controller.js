@@ -1,7 +1,7 @@
 const knex = require("knex")(require("../knexfile"));
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const secretKey = "a667c5c6a02383e5730e4a9740c1628deefd405b5d243ff5a731e13831fdd1f1"
+
 
 
 const index = async (_req, res) => {
@@ -146,8 +146,12 @@ const login = async (req, res) => {
         }
 
         const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: "24h" });
+        res.json({ token, user });
 
-        res.json({ token });
+        if (token) {
+            sessionStorage.setItem("token", token);
+        }
+
     } catch (error) {
         console.error(error);
         res.status(500).json({
