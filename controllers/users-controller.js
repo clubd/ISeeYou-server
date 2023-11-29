@@ -35,7 +35,7 @@ const findOne = async (req, res) => {
 const tasks = async (req, res) => {
     try {
         const userId = req.params.id;
-        console.log("Received user ID:", userId);
+        
 
         if (!userId) {
             return res.status(400).json({ message: "User ID is missing in the request." });
