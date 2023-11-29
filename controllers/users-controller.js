@@ -126,7 +126,7 @@ const register = async (req, res) => {
         const newUserId = result[0];
         const token = jwt.sign({ userId: newUserId }, process.env.JWT_KEY, { expiresIn: "24h" });
 
-        res.status(201).json({ token });
+        res.status(201).json({ data: { token } });
     } catch (error) {
         console.error(error);
         res.status(500).json({
